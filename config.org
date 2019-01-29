@@ -142,11 +142,10 @@ This is based on the following config files:
    ;  :ensure t
    ;  :config (load-theme 'nord t)
   ;;           (setq nord-comment-brightness 20))
+
   (use-package zenburn-theme
     :ensure t
     :config (load-theme 'zenburn t))
-;;            (setq nord-comment-brightness 20))
-
   #+END_SRC
 * Pdf Tools
   I like this for pdf.
@@ -157,9 +156,13 @@ This is based on the following config files:
       :ensure t
       :config (pdf-tools-install)
       (add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
-      ;; (pdf-view-midnight-colors (quote ("#FFFFFF" . "#1C1C1C")))
+      (pdf-view-midnight-colors (quote ("#FFFFFF" . "#1C1C1C")))
     )
   #+END_SRC
+
+  #+RESULTS:
+  : t
+
 * Smartparens
   Straightforward smartparens config. I want it all the time except when I'm
   typing English and I need "'".
@@ -180,8 +183,8 @@ This is based on the following config files:
   #+BEGIN_SRC emacs-lisp
     (use-package elpy
       :ensure t
-      :config (elpy-enable)
-      (setq elpy-rpc-backend "jedi"))
+      :config (elpy-enable))
+      ;(setq elpy-rpc-backend "jedi"))
 
     (use-package ein
       :ensure t)
@@ -207,30 +210,31 @@ This is based on the following config files:
 ** Basic Stuff
 
   #+BEGIN_SRC emacs-lisp
-    (use-package org
-      :ensure t
-      :pin gnu
-      :config
-      (set-fontset-font "fontset-default" nil (font-spec :size 20 :name "Symbola"))
-      (setq org-ellipsis " ⬎")
+        (use-package org
+          :ensure t
+          :pin gnu
+          :config
+          (set-fontset-font "fontset-default" nil (font-spec :size 20 :name "Symbola"))
+          (setq org-ellipsis " ⬎")
 
-      (setq org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE")))
+          (setq org-todo-keywords '((sequence "TODO(t)" "STARTED(s!)" "WAITING(w@)" "|" "DONE(d!)")))
 
-      (setq org-src-fontify-natively t)
-      (setq org-src-tab-acts-natively t)
-      (setq org-src-window-setup 'current-window)
-      (setq org-confirm-babel-evaluate nil)
+          (setq org-src-fontify-natively t)
+          (setq org-src-tab-acts-natively t)
+          (setq org-src-window-setup 'current-window)
+          (setq org-confirm-babel-evaluate nil)
 
-      (add-to-list 'org-structure-template-alist
-                   '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
-        (add-to-list 'org-structure-template-alist
-                 '("py" "#+BEGIN_SRC python\n?\n#+END_SRC")))
+          (add-to-list 'org-structure-template-alist
+                       '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
+            (add-to-list 'org-structure-template-alist
+                     '("py" "#+BEGIN_SRC python\n?\n#+END_SRC")))
 
-    (use-package org-bullets
-      :ensure t
-      :config
-      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+        (use-package org-bullets
+          :ensure t
+          :config
+          (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
   #+END_SRC
+
 
   #+BEGIN_SRC emacs-lisp
     (setq exec-path (append exec-path '("/usr/bin/tex")))
@@ -244,7 +248,7 @@ This is based on the following config files:
   #+BEGIN_SRC emacs-lisp
   (require 'ox-beamer)
   #+END_SRC
-** TODO Let Latex take care of russian
+** WAITING Let Latex take care of russian
 ** TODO Org subtree presentation
 * Ivy
   #+BEGIN_SRC emacs-lisp
@@ -318,4 +322,4 @@ This is based on the following config files:
 #  (add-hook 'shell-dynamic-complete-functions
 #    'bash-completion-dynamic-complete)
 
-# #+END_SRC
+# #+END_SR

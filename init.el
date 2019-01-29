@@ -31,10 +31,11 @@
    ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "yellow green" "#DC8CC3" "khaki" "#DCDCCC"])
  '(package-selected-packages
    (quote
-    (zenburn-theme ox-beamer use-package swiper smartparens py-autopep8 pdf-tools org-bullets nord-theme magit elpy ein diminish auto-package-update))))
+    (diredful zenburn-theme ox-beamer use-package swiper smartparens py-autopep8 pdf-tools org-bullets nord-theme magit elpy ein diminish auto-package-update))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(dired-header ((t (:foreground "khaki"))))
+ '(font-lock-function-name-face ((t (:foreground "yellow green")))))
