@@ -59,6 +59,11 @@
 (eval-after-load "linum"
   '(set-face-attribute 'linum nil :height 125))
 
+(defun drf/append-to-path (path)
+  "Add a path both to the $PATH variable and to Emacs' exec-path."
+  (setenv "PATH" (concat (getenv "PATH") ":" path))
+  (add-to-list 'exec-path path))
+
 ;;start on eshell
     ;(add-hook 'emacs-startup-hook 'eshell)
 
@@ -84,19 +89,19 @@
  (display-time-mode 1)
 
 ; (use-package nord-theme
-   ;  :ensure t
-   ;  :config (load-theme 'nord t)
-  ;;           (setq nord-comment-brightness 20))
-  (use-package zenburn-theme
-    :ensure t
-    :config (load-theme 'zenburn t))
-;;            (setq nord-comment-brightness 20))
+ ;  :ensure t
+ ;  :config (load-theme 'nord t)
+;;           (setq nord-comment-brightness 20))
+
+(use-package zenburn-theme
+  :ensure t
+  :config (load-theme 'zenburn t))
 
 (use-package pdf-tools
   :ensure t
   :config (pdf-tools-install)
   (add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
-  ;; (pdf-view-midnight-colors (quote ("#FFFFFF" . "#1C1C1C")))
+  (setq pdf-view-midnight-colors (quote ("#FFFFFF" . "#1C1C1C")))
 )
 
 (use-package smartparens
@@ -109,10 +114,18 @@
 (use-package magit
   :ensure t)
 
+(use-package python-mode)
+(drf/append-to-path "~/.local/bin")
+
 (use-package elpy
   :ensure t
   :config (elpy-enable))
-  ;(setq elpy-rpc-backend "jedi"))
+
+(use-package company-jedi)
+(add-to-list 'company-backends 'company-jedi)
+
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:complete-on-dot t)
 
 (use-package ein
   :ensure t)
@@ -141,7 +154,7 @@
   (set-fontset-font "fontset-default" nil (font-spec :size 20 :name "Symbola"))
   (setq org-ellipsis " ⬎")
 
-  (setq org-todo-keywords '((sequence "TODO" "WAITING" "|" "DONE")))
+  (setq org-todo-keywords '((sequence "TODO(t)" "STARTED(s!)" "WAITING(w@)" "|" "DONE(d!)")))
 
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)
@@ -185,11 +198,11 @@
 (use-package company
   :ensure t
   :config (global-company-mode t)
-          (setq company-idle-delay 0)
-          (setq company-minimum-prefix-length 3)
-          (define-key company-active-map (kbd "<tab>") 'company-complete)
-          (define-key company-active-map (kbd "C-n") 'company-select-next)
-          (define-key company-active-map (kbd "C-p") 'company-select-previous))
+  (setq company-idle-delay 0)
+  (setq company-minimum-prefix-length 3)
+  (define-key company-active-map (kbd "<tab>") 'company-complete)
+  (define-key company-active-map (kbd "C-n") 'company-select-next)
+  (define-key company-active-map (kbd "C-p") 'company-select-previous))
 
 (define-advice shr-parse-image-data (:around (fn &rest args) my-emacs-25-patch)
   "Hackaround for bug#24111 in Emacs 25."

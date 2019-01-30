@@ -108,6 +108,14 @@ This is based on the following config files:
       (eval-after-load "linum"
         '(set-face-attribute 'linum nil :height 125))
     #+END_SRC
+* sweet functions
+hopefully some sweet utility functions will appear here
+#+BEGIN_SRC emacs-lisp
+(defun drf/append-to-path (path)
+  "Add a path both to the $PATH variable and to Emacs' exec-path."
+  (setenv "PATH" (concat (getenv "PATH") ":" path))
+  (add-to-list 'exec-path path))
+#+END_SRC
 * Startup
   Startup behaviour
   #+BEGIN_SRC emacs-lisp
@@ -156,7 +164,7 @@ This is based on the following config files:
       :ensure t
       :config (pdf-tools-install)
       (add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
-      (pdf-view-midnight-colors (quote ("#FFFFFF" . "#1C1C1C")))
+      (setq pdf-view-midnight-colors (quote ("#FFFFFF" . "#1C1C1C")))
     )
   #+END_SRC
 
@@ -181,10 +189,18 @@ This is based on the following config files:
   #+END_SRC
 * Python
   #+BEGIN_SRC emacs-lisp
+    (use-package python-mode)
+    (drf/append-to-path "~/.local/bin")
+
     (use-package elpy
       :ensure t
       :config (elpy-enable))
-      ;(setq elpy-rpc-backend "jedi"))
+
+    (use-package company-jedi)
+    (add-to-list 'company-backends 'company-jedi)
+
+    (add-hook 'python-mode-hook 'jedi:setup)
+    (setq jedi:complete-on-dot t)
 
     (use-package ein
       :ensure t)
@@ -206,6 +222,9 @@ This is based on the following config files:
 
     ;; '(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
   #+END_SRC
+
+  #+RESULTS:
+
 * Org
 ** Basic Stuff
 
@@ -274,11 +293,11 @@ This is based on the following config files:
     (use-package company
       :ensure t
       :config (global-company-mode t)
-              (setq company-idle-delay 0)
-              (setq company-minimum-prefix-length 3)
-              (define-key company-active-map (kbd "<tab>") 'company-complete)
-              (define-key company-active-map (kbd "C-n") 'company-select-next)
-              (define-key company-active-map (kbd "C-p") 'company-select-previous))
+      (setq company-idle-delay 0)
+      (setq company-minimum-prefix-length 3)
+      (define-key company-active-map (kbd "<tab>") 'company-complete)
+      (define-key company-active-map (kbd "C-n") 'company-select-next)
+      (define-key company-active-map (kbd "C-p") 'company-select-previous))
   #+END_SRC
 * eww bug
   Solves the problem of not rendering Latex properly in eww mode.
