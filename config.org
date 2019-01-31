@@ -24,8 +24,7 @@ This is based on the following config files:
 * Diminish
   Just a way to get rid of some minor modes showing up everywhere.
   #+BEGIN_SRC emacs-lisp
-  (use-package diminish
-    :ensure t)
+  (use-package diminish)
   #+END_SRC
 * Built-in defaults
 ** Here's a bunch of built-in stuff that I prefer by default.
@@ -143,6 +142,7 @@ hopefully some sweet utility functions will appear here
  		    'face 'egoge-display-time)))
  (display-time-mode 1)
 
+(setq )
   #+END_SRC
 * Theme
   #+BEGIN_SRC emacs-lisp
@@ -152,31 +152,30 @@ hopefully some sweet utility functions will appear here
   ;;           (setq nord-comment-brightness 20))
 
   (use-package zenburn-theme
-    :ensure t
     :config (load-theme 'zenburn t))
   #+END_SRC
+* Flycheck
+ #+BEGIN_SRC emacs-lisp
+   (use-package flycheck
+     :init
+     (global-flycheck-mode t))
+ #+END_SRC
 * Pdf Tools
   I like this for pdf.
   How to enable midnight by default?
 
   #+BEGIN_SRC emacs-lisp
     (use-package pdf-tools
-      :ensure t
       :config (pdf-tools-install)
       (add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
       (setq pdf-view-midnight-colors (quote ("#FFFFFF" . "#1C1C1C")))
     )
   #+END_SRC
-
-  #+RESULTS:
-  : t
-
 * Smartparens
   Straightforward smartparens config. I want it all the time except when I'm
   typing English and I need "'".
   #+BEGIN_SRC emacs-lisp
     (use-package smartparens
-      :ensure t
       :diminish smartparens-mode
       :config
       (smartparens-global-mode)
@@ -184,26 +183,30 @@ hopefully some sweet utility functions will appear here
   #+END_SRC
 * Magit
   #+BEGIN_SRC emacs-lisp
-    (use-package magit
-      :ensure t)
+    (use-package magit)
   #+END_SRC
 * Python
   #+BEGIN_SRC emacs-lisp
     (use-package python-mode)
     (drf/append-to-path "~/.local/bin")
-
+    (add-hook 'python-mode-hook'(lambda () (auto-complete-mode -1)))
+    (add-hook 'python-mode-hook'(lambda () (jedi-mode -1)))
     (use-package elpy
-      :ensure t
       :config (elpy-enable))
 
-    (use-package company-jedi)
-    (add-to-list 'company-backends 'company-jedi)
+    ;(use-package company-jedi)
+    ;(add-to-list 'company-backends 'company-jedi)
 
-    (add-hook 'python-mode-hook 'jedi:setup)
-    (setq jedi:complete-on-dot t)
+    ;(add-hook 'python-mode-hook 'jedi:setup)
 
-    (use-package ein
-      :ensure t)
+    (use-package jedi
+      :init
+      (add-hook 'python-mode-hook 'jedi:setup)
+      (add-hook 'python-mode-hook 'jedi:ac-setup))
+      (setq jedi:complete-on-dot t)
+
+    (use-package ein)
+    (add-hook 'ein:connect-mode-hook 'ein:jedi-setup)
 
     (setq python-shell-interpreter "jupyter"
           python-shell-interpreter-args "console --simple-prompt"
@@ -217,21 +220,19 @@ hopefully some sweet utility functions will appear here
       (add-hook 'elpy-mode-hook 'flycheck-mode))
 
     ;; enable autopep8 formatting on save
-    (use-package py-autopep8
-        :ensure t)
+    (use-package py-autopep8)
 
-    ;; '(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+    (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
   #+END_SRC
 
   #+RESULTS:
-
+  | py-autopep8-enable-on-save | flycheck-mode |
 * Org
 ** Basic Stuff
 
   #+BEGIN_SRC emacs-lisp
         (use-package org
-          :ensure t
-          :pin gnu
+           :pin gnu
           :config
           (set-fontset-font "fontset-default" nil (font-spec :size 20 :name "Symbola"))
           (setq org-ellipsis " ⬎")
@@ -249,7 +250,6 @@ hopefully some sweet utility functions will appear here
                      '("py" "#+BEGIN_SRC python\n?\n#+END_SRC")))
 
         (use-package org-bullets
-          :ensure t
           :config
           (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
   #+END_SRC
@@ -272,7 +272,6 @@ hopefully some sweet utility functions will appear here
 * Ivy
   #+BEGIN_SRC emacs-lisp
     (use-package ivy
-      :ensure t
       :diminish ivy-mode
       :config
       (ivy-mode 1)
@@ -281,7 +280,6 @@ hopefully some sweet utility functions will appear here
       (setq ivy-extra-directories ()))
 
     (use-package swiper
-      :ensure t
       :bind
       ("C-s" . swiper)
       ("C-r" . swiper))
@@ -291,7 +289,6 @@ hopefully some sweet utility functions will appear here
 
   #+BEGIN_SRC emacs-lisp
     (use-package company
-      :ensure t
       :config (global-company-mode t)
       (setq company-idle-delay 0)
       (setq company-minimum-prefix-length 3)

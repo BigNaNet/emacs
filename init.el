@@ -12,6 +12,8 @@
 	(package-refresh-contents)
 	(package-install 'use-package))
 
+(setq use-package-always-ensure t)
+
 ;; auto update packages
 (use-package auto-package-update
   :ensure t
@@ -31,7 +33,7 @@
    ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "yellow green" "#DC8CC3" "khaki" "#DCDCCC"])
  '(package-selected-packages
    (quote
-    (python-mode company-jedi jedi diredful zenburn-theme ox-beamer use-package swiper smartparens py-autopep8 pdf-tools org-bullets nord-theme magit elpy ein diminish auto-package-update))))
+    (flycheck python-mode company-jedi jedi diredful zenburn-theme ox-beamer use-package swiper smartparens py-autopep8 pdf-tools org-bullets nord-theme magit elpy ein diminish auto-package-update))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

@@ -6,8 +6,7 @@
 (setq user-full-name "Daniel Ferreira"
       user-mail-address "ferreira.d4.r@gmail.com")
 
-(use-package diminish
-  :ensure t)
+(use-package diminish)
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 (add-hook 'prog-mode-hook 'subword-mode)
@@ -88,47 +87,54 @@
                     'face 'egoge-display-time)))
  (display-time-mode 1)
 
+(setq )
+
 ; (use-package nord-theme
  ;  :ensure t
  ;  :config (load-theme 'nord t)
 ;;           (setq nord-comment-brightness 20))
 
 (use-package zenburn-theme
-  :ensure t
   :config (load-theme 'zenburn t))
 
+(use-package flycheck
+  :init
+  (global-flycheck-mode t))
+
 (use-package pdf-tools
-  :ensure t
   :config (pdf-tools-install)
   (add-hook 'pdf-tools-enabled-hook 'pdf-view-midnight-minor-mode)
   (setq pdf-view-midnight-colors (quote ("#FFFFFF" . "#1C1C1C")))
 )
 
 (use-package smartparens
-  :ensure t
   :diminish smartparens-mode
   :config
   (smartparens-global-mode)
   (sp-pair "'" nil :unless '(sp-point-after-word-p)))
 
-(use-package magit
-  :ensure t)
+(use-package magit)
 
 (use-package python-mode)
 (drf/append-to-path "~/.local/bin")
-
+(add-hook 'python-mode-hook'(lambda () (auto-complete-mode -1)))
+(add-hook 'python-mode-hook'(lambda () (jedi-mode -1)))
 (use-package elpy
-  :ensure t
   :config (elpy-enable))
 
-(use-package company-jedi)
-(add-to-list 'company-backends 'company-jedi)
+;(use-package company-jedi)
+;(add-to-list 'company-backends 'company-jedi)
 
-(add-hook 'python-mode-hook 'jedi:setup)
-(setq jedi:complete-on-dot t)
+;(add-hook 'python-mode-hook 'jedi:setup)
 
-(use-package ein
-  :ensure t)
+(use-package jedi
+  :init
+  (add-hook 'python-mode-hook 'jedi:setup)
+  (add-hook 'python-mode-hook 'jedi:ac-setup))
+  (setq jedi:complete-on-dot t)
+
+(use-package ein)
+(add-hook 'ein:connect-mode-hook 'ein:jedi-setup)
 
 (setq python-shell-interpreter "jupyter"
       python-shell-interpreter-args "console --simple-prompt"
@@ -142,14 +148,12 @@
   (add-hook 'elpy-mode-hook 'flycheck-mode))
 
 ;; enable autopep8 formatting on save
-(use-package py-autopep8
-    :ensure t)
+(use-package py-autopep8)
 
-;; '(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
 
 (use-package org
-  :ensure t
-  :pin gnu
+   :pin gnu
   :config
   (set-fontset-font "fontset-default" nil (font-spec :size 20 :name "Symbola"))
   (setq org-ellipsis " ⬎")
@@ -167,7 +171,6 @@
              '("py" "#+BEGIN_SRC python\n?\n#+END_SRC")))
 
 (use-package org-bullets
-  :ensure t
   :config
   (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
@@ -181,7 +184,6 @@
 (require 'ox-beamer)
 
 (use-package ivy
-  :ensure t
   :diminish ivy-mode
   :config
   (ivy-mode 1)
@@ -190,13 +192,11 @@
   (setq ivy-extra-directories ()))
 
 (use-package swiper
-  :ensure t
   :bind
   ("C-s" . swiper)
   ("C-r" . swiper))
 
 (use-package company
-  :ensure t
   :config (global-company-mode t)
   (setq company-idle-delay 0)
   (setq company-minimum-prefix-length 3)
