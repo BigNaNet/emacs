@@ -31,6 +31,7 @@
  ;; If there is more than one, they won't work right.
  '(ansi-color-names-vector
    ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "yellow green" "#DC8CC3" "khaki" "#DCDCCC"])
+ '(magit-git-executable "git")
  '(package-selected-packages
    (quote
     (flycheck python-mode company-jedi jedi diredful zenburn-theme ox-beamer use-package swiper smartparens py-autopep8 pdf-tools org-bullets nord-theme magit elpy ein diminish auto-package-update))))

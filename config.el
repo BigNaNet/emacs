@@ -49,6 +49,7 @@
 (define-key global-map (kbd "M-g") 'goto-line)
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
+(global-set-key (kbd "M-SPC") 'other-frame)
 
 (setq backup-directory-alist
         `((".*" . ,temporary-file-directory)))
@@ -63,31 +64,8 @@
   (setenv "PATH" (concat (getenv "PATH") ":" path))
   (add-to-list 'exec-path path))
 
-;;start on eshell
-    ;(add-hook 'emacs-startup-hook 'eshell)
-
-    ;; fullscreen by default
-    (defun fullscreen ()
-           (interactive)
-           (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-                                '(2 "_NET_WM_STATE_FULLSCREEN" 0)))
-    (fullscreen)
-(defface egoge-display-time
-      '((((type x w32 mac))
-      ;; #060525 is the background colour of my default face.
-      (:foreground "#56c90e" :inherit bold))
-     (((type tty))
-      (:foreground "green")))
-   "Face used to display the time in the mode line.")
-
- ;; This causes the current time in the mode line to be displayed in
- ;; `egoge-display-time-face' to make it stand out visually.
- (setq display-time-string-forms
-       '((propertize (concat " " 24-hours ":" minutes " ")
-                    'face 'egoge-display-time)))
- (display-time-mode 1)
-
-(setq )
+(defun drf/init-file(filepath)
+  (find-file filepath))
 
 ; (use-package nord-theme
  ;  :ensure t
@@ -113,7 +91,9 @@
   (smartparens-global-mode)
   (sp-pair "'" nil :unless '(sp-point-after-word-p)))
 
-(use-package magit)
+(use-package magit
+   :init
+   (drf/append-to-path "/ifs/opt/app/git/2.8.1-gcc/bin"))
 
 (use-package python-mode)
 (drf/append-to-path "~/.local/bin")
@@ -159,11 +139,13 @@
   (setq org-ellipsis " ⬎")
 
   (setq org-todo-keywords '((sequence "TODO(t)" "STARTED(s!)" "WAITING(w@)" "|" "DONE(d!)")))
-
+  (setq org-todo-keyword-faces
+        '(("TODO" . org-warning) ("STARTED" . "yellow") ("WAITING" . "orange")))
   (setq org-src-fontify-natively t)
   (setq org-src-tab-acts-natively t)
   (setq org-src-window-setup 'current-window)
   (setq org-confirm-babel-evaluate nil)
+
 
   (add-to-list 'org-structure-template-alist
                '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
@@ -225,3 +207,27 @@
  'eshell-mode-hook
  (lambda ()
    (setq pcomplete-cycle-completions nil)))
+
+(find-file "~/Desktop/Jira_Tasks/what_to_do.org")
+    ;; fullscreen by default
+    (defun fullscreen ()
+           (interactive)
+           (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
+                                '(2 "_NET_WM_STATE_FULLSCREEN" 0)))
+    (fullscreen)
+(defface egoge-display-time
+      '((((type x w32 mac))
+      ;; #060525 is the background colour of my default face.
+      (:foreground "#56c90e" :inherit bold))
+     (((type tty))
+      (:foreground "green")))
+   "Face used to display the time in the mode line.")
+
+ ;; This causes the current time in the mode line to be displayed in
+ ;; `egoge-display-time-face' to make it stand out visually.
+ (setq display-time-string-forms
+       '((propertize (concat " " 24-hours ":" minutes " ")
+                    'face 'egoge-display-time)))
+ (display-time-mode 1)
+
+(setq )

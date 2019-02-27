@@ -94,7 +94,12 @@ This is based on the following config files:
       (define-key global-map (kbd "M-g") 'goto-line)
 
       (global-set-key (kbd "C-x C-b") 'ibuffer)
+      (global-set-key (kbd "M-SPC") 'other-frame)
     #+END_SRC
+
+    #+RESULTS:
+    : other-frame
+
 *** Backups
     #+BEGIN_SRC emacs-lisp
       (setq backup-directory-alist
@@ -110,40 +115,14 @@ This is based on the following config files:
 * sweet functions
 hopefully some sweet utility functions will appear here
 #+BEGIN_SRC emacs-lisp
-(defun drf/append-to-path (path)
-  "Add a path both to the $PATH variable and to Emacs' exec-path."
-  (setenv "PATH" (concat (getenv "PATH") ":" path))
-  (add-to-list 'exec-path path))
+    (defun drf/append-to-path (path)
+      "Add a path both to the $PATH variable and to Emacs' exec-path."
+      (setenv "PATH" (concat (getenv "PATH") ":" path))
+      (add-to-list 'exec-path path))
+
+    (defun drf/init-file(filepath)
+      (find-file filepath))
 #+END_SRC
-* Startup
-  Startup behaviour
-  #+BEGIN_SRC emacs-lisp
-    ;;start on eshell
-    ;(add-hook 'emacs-startup-hook 'eshell)
-
-    ;; fullscreen by default
-    (defun fullscreen ()
-           (interactive)
-           (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
-                                '(2 "_NET_WM_STATE_FULLSCREEN" 0)))
-    (fullscreen)
-(defface egoge-display-time
-      '((((type x w32 mac))
-      ;; #060525 is the background colour of my default face.
-      (:foreground "#56c90e" :inherit bold))
-     (((type tty))
-      (:foreground "green")))
-   "Face used to display the time in the mode line.")
-
- ;; This causes the current time in the mode line to be displayed in
- ;; `egoge-display-time-face' to make it stand out visually.
- (setq display-time-string-forms
-       '((propertize (concat " " 24-hours ":" minutes " ")
- 		    'face 'egoge-display-time)))
- (display-time-mode 1)
-
-(setq )
-  #+END_SRC
 * Theme
   #+BEGIN_SRC emacs-lisp
   ; (use-package nord-theme
@@ -183,7 +162,10 @@ hopefully some sweet utility functions will appear here
   #+END_SRC
 * Magit
   #+BEGIN_SRC emacs-lisp
-    (use-package magit)
+   (use-package magit
+      :init
+      (drf/append-to-path "/ifs/opt/app/git/2.8.1-gcc/bin"))
+
   #+END_SRC
 * Python
   #+BEGIN_SRC emacs-lisp
@@ -236,13 +218,17 @@ hopefully some sweet utility functions will appear here
           :config
           (set-fontset-font "fontset-default" nil (font-spec :size 20 :name "Symbola"))
           (setq org-ellipsis " ⬎")
-
+ #+END_SRC
+   - Make Org Pretty
+#+BEGIN_SRC emacs-lisp
           (setq org-todo-keywords '((sequence "TODO(t)" "STARTED(s!)" "WAITING(w@)" "|" "DONE(d!)")))
-
+          (setq org-todo-keyword-faces
+                '(("TODO" . org-warning) ("STARTED" . "yellow") ("WAITING" . "orange")))
           (setq org-src-fontify-natively t)
           (setq org-src-tab-acts-natively t)
           (setq org-src-window-setup 'current-window)
           (setq org-confirm-babel-evaluate nil)
+
 
           (add-to-list 'org-structure-template-alist
                        '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
@@ -253,6 +239,9 @@ hopefully some sweet utility functions will appear here
           :config
           (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
   #+END_SRC
+
+  #+RESULTS:
+  : t
 
 
   #+BEGIN_SRC emacs-lisp
@@ -267,8 +256,6 @@ hopefully some sweet utility functions will appear here
   #+BEGIN_SRC emacs-lisp
   (require 'ox-beamer)
   #+END_SRC
-** WAITING Let Latex take care of russian
-** TODO Org subtree presentation
 * Ivy
   #+BEGIN_SRC emacs-lisp
     (use-package ivy
@@ -307,7 +294,7 @@ hopefully some sweet utility functions will appear here
                 ((symbol-function 'shr-dom-to-xml)          #'identity))
         (apply fn args))))
   #+END_SRC
-* shell and eshell
+* shell and eshelln
   Make M-n and M-p more intelligent in shell.
 
   #+BEGIN_SRC emacs-lisp
@@ -337,5 +324,32 @@ hopefully some sweet utility functions will appear here
 #    "BASH completion hook")
 #  (add-hook 'shell-dynamic-complete-functions
 #    'bash-completion-dynamic-complete)
-
+   (add-to-list 'tramp-remote-path "/ifs/opt/app/git/2.8.1-gcc/bin")
 # #+END_SR
+* Startup
+  Startup behaviour
+ #+BEGIN_SRC emacs-lisp
+   (find-file "~/Desktop/Jira_Tasks/what_to_do.org")
+       ;; fullscreen by default
+       (defun fullscreen ()
+              (interactive)
+              (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
+                                   '(2 "_NET_WM_STATE_FULLSCREEN" 0)))
+       (fullscreen)
+   (defface egoge-display-time
+         '((((type x w32 mac))
+         ;; #060525 is the background colour of my default face.
+         (:foreground "#56c90e" :inherit bold))
+        (((type tty))
+         (:foreground "green")))
+      "Face used to display the time in the mode line.")
+
+    ;; This causes the current time in the mode line to be displayed in
+    ;; `egoge-display-time-face' to make it stand out visually.
+    (setq display-time-string-forms
+          '((propertize (concat " " 24-hours ":" minutes " ")
+                       'face 'egoge-display-time)))
+    (display-time-mode 1)
+
+   (setq )
+ #+END_SRC
