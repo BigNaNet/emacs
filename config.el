@@ -138,7 +138,7 @@
   (set-fontset-font "fontset-default" nil (font-spec :size 20 :name "Symbola"))
   (setq org-ellipsis " ⬎")
 
-  (setq org-todo-keywords '((sequence "TODO(t)" "STARTED(s!)" "WAITING(w@)" "|" "DONE(d!)")))
+(setq org-todo-keywords '((sequence "TODO(t)" "STARTED(s!)" "WAITING(w@)" "|" "DONE(d!)")))
   (setq org-todo-keyword-faces
         '(("TODO" . org-warning) ("STARTED" . "yellow") ("WAITING" . "orange")))
   (setq org-src-fontify-natively t)
