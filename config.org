@@ -1,26 +1,54 @@
 This is based on the following config files:
 - [[https://github.com/zamansky/using-emacs/blob/master/myinit.org][Mike Zamansky]]
 - [[https://github.com/hrs/dotfiles/blob/master/emacs/.emacs.d/configuration.org][Harry Schwartz]]
+- [[https://github.com/aadcg/.emacs.d/blob/master/config.org][Another Guy]]
 
 #+BEGIN_SRC emacs-lisp
 (version)
 #+END_SRC
-#+RESULTS:
-: GNU Emacs 25.2.2 (x86_64-pc-linux-gnu, GTK+ Version 3.22.21)
-:  of 2017-09-22, modified by Debian
 
 #+BEGIN_SRC emacs-lisp
 (org-version)
 #+END_SRC
-
-#+RESULTS:
-: 8.2.10
 
 * About me
   #+BEGIN_SRC emacs-lisp
     (setq user-full-name "Daniel Ferreira"
           user-mail-address "ferreira.d4.r@gmail.com")
   #+END_SRC
+* Sweet functions
+  hopefully more sweet utility functions will appear here
+#+BEGIN_SRC emacs-lisp
+  (defun config-visit()
+    "Visits my config file"
+    (interactive)
+    (find-file "~/.emacs.d/config.org"))
+  (defun config-reload()
+    "Relads ~/.emacs.d/config.org at runtime"
+    (interactive)
+    (org-babel-load-file (expand-file-name "~/.emacs.d/config.org")))
+  (defun drf/append-to-path (path)
+    "Add a path both to the $PATH variable and to Emacs' exec-path."
+    (setenv "PATH" (concat (getenv "PATH") ":" path))
+    (add-to-list 'exec-path path))
+  (defun drf/create-frame()
+    (interactive)
+    (make-frame . (transparency 90))
+    (transparency 90))
+  (defun drf/init-file(filepath)
+    (find-file filepath))
+#+END_SRC
+
+key-bindings to some functions
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c e") 'config-visit)
+  (global-set-key (kbd "C-c r") 'config-reload)
+  (global-set-key (kbd "C-<f1>") 'drf/create-frame)
+
+#+END_SRC
+
+#+RESULTS:
+: drf/create-frame
 * Diminish
   Just a way to get rid of some minor modes showing up everywhere.
   #+BEGIN_SRC emacs-lisp
@@ -28,7 +56,7 @@ This is based on the following config files:
   #+END_SRC
 * Built-in defaults
 ** Here's a bunch of built-in stuff that I prefer by default.
-*** Words, whitespaces and text
+*** Wordsp, whitespaces and text
     - Get rid of trailing whitespaces when a file is saved
     - Treat CamelCaseSubWords as separate words in programming stuff
     - Overwrite selected text
@@ -40,7 +68,8 @@ This is based on the following config files:
       (delete-selection-mode t)
       (setq require-final-newline t)
       (setq-default fill-column 80)
-      ;;(add-hook 'text-mode-hook 'turn-on-auto-fill)
+      (add-hook 'text-mode-hook 'turn-on-auto-fill)
+      (setq-default indent-tabs-mode nil)
     #+END_SRC
 *** Aesthetics, line numbering and matching parenthesis
     - Hide startup stuff, hide bars, and simplify yes/no to y/n
@@ -52,11 +81,9 @@ This is based on the following config files:
       (setq inhibit-startup-message t)
       (setq initial-scratch-message nil)
       (tool-bar-mode -1)
-      ;; (menu-bar-mode -1)
       (scroll-bar-mode -1)
       (horizontal-scroll-bar-mode -1)
       (fset 'yes-or-no-p 'y-or-n-p)
-
       (show-paren-mode t)
       (setq show-paren-delay 0.0)
       (add-hook 'prog-mode-hook 'linum-mode)
@@ -74,32 +101,26 @@ This is based on the following config files:
 *** Windows and buffers
     - Automatically revert buffer if smth changed
     - Killing a buffer also kills the window
-    - Navigating buffers with S-<arrows>
+
     #+BEGIN_SRC emacs-lisp
       (global-auto-revert-mode t)
       (substitute-key-definition 'kill-buffer 'kill-buffer-and-window global-map)
-      (windmove-default-keybindings)
-      (setq windmove-wrap-around t)
     #+END_SRC
 *** Keybindings
     #+BEGIN_SRC emacs-lisp
       (defun reset-text-size ()
-        (interactive)
-        (text-scale-set 0))
+	(interactive)
+	(text-scale-set 0))
 
       (define-key global-map (kbd "C-0") 'reset-text-size)
       (define-key global-map (kbd "C-+") 'text-scale-increase)
       (define-key global-map (kbd "C--") 'text-scale-decrease)
 
       (define-key global-map (kbd "M-g") 'goto-line)
-
+      (define-key global-map (kbd "C-c s") 'replace-string)
       (global-set-key (kbd "C-x C-b") 'ibuffer)
       (global-set-key (kbd "M-SPC") 'other-frame)
     #+END_SRC
-
-    #+RESULTS:
-    : other-frame
-
 *** Backups
     #+BEGIN_SRC emacs-lisp
       (setq backup-directory-alist
@@ -112,27 +133,26 @@ This is based on the following config files:
       (eval-after-load "linum"
         '(set-face-attribute 'linum nil :height 125))
     #+END_SRC
-* sweet functions
-hopefully some sweet utility functions will appear here
-#+BEGIN_SRC emacs-lisp
-    (defun drf/append-to-path (path)
-      "Add a path both to the $PATH variable and to Emacs' exec-path."
-      (setenv "PATH" (concat (getenv "PATH") ":" path))
-      (add-to-list 'exec-path path))
 
-    (defun drf/init-file(filepath)
-      (find-file filepath))
-#+END_SRC
 * Theme
   #+BEGIN_SRC emacs-lisp
-  ; (use-package nord-theme
-   ;  :ensure t
-   ;  :config (load-theme 'nord t)
-  ;;           (setq nord-comment-brightness 20))
+     ; (use-package nord-theme
+      ;  :ensure t
+      ;  :config (load-theme 'nord t)
+     ;;           (setq nord-comment-brightness 20))
+       (defun transparency (value)
+	 "Sets the transparency of the frame window. 0=transparent/100=opaque."
+	 (interactive "nTransparency Value 0 - 100 opaque:")
+	 (set-frame-parameter (selected-frame) 'alpha value))
 
-  (use-package zenburn-theme
-    :config (load-theme 'zenburn t))
+     (use-package zenburn-theme
+       :config
+       (load-theme 'zenburn t)
+       (transparency 90))
   #+END_SRC
+
+  #+RESULTS:
+  : t
 * Flycheck
  #+BEGIN_SRC emacs-lisp
    (use-package flycheck
@@ -155,69 +175,64 @@ hopefully some sweet utility functions will appear here
   typing English and I need "'".
   #+BEGIN_SRC emacs-lisp
     (use-package smartparens
-      :diminish smartparens-mode
       :config
-      (smartparens-global-mode)
-      (sp-pair "'" nil :unless '(sp-point-after-word-p)))
+      (require 'smartparens-config)
+      (smartparens-global-strict-mode)
+      (show-smartparens-global-mode)
+      (sp-local-pair 'org-mode "$$" "$$"))
   #+END_SRC
 * Magit
   #+BEGIN_SRC emacs-lisp
-   (use-package magit
-      :init
-      (drf/append-to-path "/ifs/opt/app/git/2.8.1-gcc/bin"))
-
+    (use-package magit
+       ;; :init
+       ;; (drf/append-to-path "/ifs/opt/app/git/2.8.1-gcc/bin"))
+       :bind
+       ("C-x g" . magit-status)
   #+END_SRC
+* Yaml
+#+BEGIN_SRC emacs-lisp
+(use-package yaml-mode
+ :config
+ (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode)))
+#+END_SRC
 * Python
   #+BEGIN_SRC emacs-lisp
-    (use-package python-mode)
-    (drf/append-to-path "~/.local/bin")
-    (add-hook 'python-mode-hook'(lambda () (auto-complete-mode -1)))
-    (add-hook 'python-mode-hook'(lambda () (jedi-mode -1)))
+     (use-package python-mode)
+     (drf/append-to-path "/home/daniel/anaconda3/bin/")
     (use-package elpy
-      :config (elpy-enable))
+       :init
+       (elpy-enable))
+       :config
+       (setq python-shell-interpreter "jupyter"
+           python-shell-interpreter-args "-i --simple-prompt")
 
-    ;(use-package company-jedi)
-    ;(add-to-list 'company-backends 'company-jedi)
 
-    ;(add-hook 'python-mode-hook 'jedi:setup)
+     (use-package ein)
 
-    (use-package jedi
-      :init
-      (add-hook 'python-mode-hook 'jedi:setup)
-      (add-hook 'python-mode-hook 'jedi:ac-setup))
-      (setq jedi:complete-on-dot t)
+     ;; use flycheck not flymake with elpy
+     (when (require 'flycheck nil t)
+       (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
 
-    (use-package ein)
-    (add-hook 'ein:connect-mode-hook 'ein:jedi-setup)
+       (add-hook 'elpy-mode-hook 'flycheck-mode))
 
-    (setq python-shell-interpreter "jupyter"
-          python-shell-interpreter-args "console --simple-prompt"
-          python-shell-prompt-detect-failure-warning nil)
-    (add-to-list 'python-shell-completion-native-disabled-interpreters
-                 "jupyter")
+     ;; enable autopep8 formatting on save
+     (use-package py-autopep8)
 
-    ;; use flycheck not flymake with elpy
-    (when (require 'flycheck nil t)
-      (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-      (add-hook 'elpy-mode-hook 'flycheck-mode))
-
-    ;; enable autopep8 formatting on save
-    (use-package py-autopep8)
-
-    (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+     (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
   #+END_SRC
 
   #+RESULTS:
   | py-autopep8-enable-on-save | flycheck-mode |
+  |                            |               |
 * Org
 ** Basic Stuff
-
   #+BEGIN_SRC emacs-lisp
-        (use-package org
-           :pin gnu
-          :config
-          (set-fontset-font "fontset-default" nil (font-spec :size 20 :name "Symbola"))
-          (setq org-ellipsis " ⬎")
+    (use-package org
+       :pin gnu
+      :config
+      (set-fontset-font "fontset-default" nil (font-spec :size 20 :name "Symbola"))
+      (setq org-ellipsis " ⬎")
+      (setq org-agenda-files (list "~/Scouts/Lobitos/plano.org"))
  #+END_SRC
    - Make Org Pretty
 #+BEGIN_SRC emacs-lisp
@@ -256,6 +271,10 @@ hopefully some sweet utility functions will appear here
   #+BEGIN_SRC emacs-lisp
   (require 'ox-beamer)
   #+END_SRC
+** Jira Mode
+#+BEGIN_SRC emacs-lisp
+ (setq jiralib-url "https://servicedesk.mindstorm.vestas.net")
+#+END_SRC
 * Ivy
   #+BEGIN_SRC emacs-lisp
     (use-package ivy
@@ -272,14 +291,16 @@ hopefully some sweet utility functions will appear here
       ("C-r" . swiper))
   #+END_SRC
 * Company mode
-  Basic company mode config.
+  Basic company mode config for autocompletion
 
   #+BEGIN_SRC emacs-lisp
     (use-package company
-      :config (global-company-mode t)
-      (setq company-idle-delay 0)
+      :config
+      (global-company-mode t)
+      (setq company-idle-delay 0.1)
       (setq company-minimum-prefix-length 3)
-      (define-key company-active-map (kbd "<tab>") 'company-complete)
+      (define-key company-active-map (kbd "C-j") 'company-complete-selection)
+      (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
       (define-key company-active-map (kbd "C-n") 'company-select-next)
       (define-key company-active-map (kbd "C-p") 'company-select-previous))
   #+END_SRC
@@ -324,8 +345,17 @@ hopefully some sweet utility functions will appear here
 #    "BASH completion hook")
 #  (add-hook 'shell-dynamic-complete-functions
 #    'bash-completion-dynamic-complete)
-   (add-to-list 'tramp-remote-path "/ifs/opt/app/git/2.8.1-gcc/bin")
-# #+END_SR
+  (require 'tramp)
+  (custom-set-variables '(tramp-remote-path 'tramp-own-remote-path))
+   (add-to-list 'tramp-remote-path '/ifs/opt/app/git/2.8.1-gcc/bin)
+  # #+END_SR
+* ledger
+ #+BEGIN_SRC emacs-lisp
+ (use-package ledger-mode)
+     (add-to-list 'load-path
+                  (expand-file-name "/path/to/ledger/source/lisp/"))
+     (add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))
+ #+END_SRC
 * Startup
   Startup behaviour
  #+BEGIN_SRC emacs-lisp
@@ -336,6 +366,8 @@ hopefully some sweet utility functions will appear here
               (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
                                    '(2 "_NET_WM_STATE_FULLSCREEN" 0)))
        (fullscreen)
+   (setq display-time-format "%k:%M %a %d %b")
+
    (defface egoge-display-time
          '((((type x w32 mac))
          ;; #060525 is the background colour of my default face.
@@ -347,7 +379,7 @@ hopefully some sweet utility functions will appear here
     ;; This causes the current time in the mode line to be displayed in
     ;; `egoge-display-time-face' to make it stand out visually.
     (setq display-time-string-forms
-          '((propertize (concat " " 24-hours ":" minutes " ")
+          '((propertize (concat  " " 24-hours ":" minutes " " dayname " " day " " monthname " ")
                        'face 'egoge-display-time)))
     (display-time-mode 1)
 
